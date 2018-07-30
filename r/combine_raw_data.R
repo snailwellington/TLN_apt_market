@@ -5,6 +5,7 @@ raw_list <- list.files("data/housing_data_raw/", pattern = ".xlsx")
 
 library(readxl)
 library(tidyverse)
+library(zoo) ## to use na.locf()
 
 property_data <- data.frame()
 for (file in raw_list){
@@ -24,6 +25,12 @@ names(property_data)<-c("year","region","area_type","tran_count",
 property_data_clean <- property_data %>% 
   filter(year != "Allikas: Maa-amet, tehingute andmebaas" & 
            year != "Tehingute hindasid puudutavad andmed kuvatakse vaid juhul, kui on toimunud vähemalt 5 tehingut." |
-           is.na(year) == TRUE)
+           is.na(year) == TRUE) %>% 
+  mutate(year = na.locf(year),
+         region = na.locf(region)) %>% 
+  separate(year, c("year","qtr"), sep = " ") %>% 
+  filter(area_type != "KOKKU")
 
-                      
+
+#### need to find prices for asula region and linnaosa (district)
+

@@ -2,6 +2,7 @@
 library(tidyverse)
 library(ggthemes)
 
+options(encoding = "UTF-8")
 
 ## defined brand colors
 elv_blue <- "#00aae7"
@@ -25,7 +26,13 @@ area.points <- broom::tidy(area, region = "asumi_nimi")
 
 ## filter out Aegna saar
 area_plot <- area.points %>% 
-  filter(id != "Aegna")
+  filter(id != "Aegna") %>% 
+  mutate(id = str_replace_all(id,"Ã•","Õ"),
+         id = str_replace_all(id,"Ã¤","ä"),
+         id = str_replace_all(id,"Ã¼","ü"),
+         id = str_replace_all(id,"Ãœ","Ü"),
+         id = str_replace_all(id,"Ãµ","õ")) %>% 
+  mutate(id = as.factor(id))
   
 
 ## generating base plot with geom_polygon
@@ -54,3 +61,24 @@ base_map <- ggplot() +
 ## go wild
 
 base_map
+
+### need to get actual reference to this file
+## why there are so many NA-s. Figure this our
+
+transaction_map <- area_plot %>% 
+  left_join(subset(region_ha_analysis, qtr_year == "2003-07-01"), by = c("id" = "region"))
+
+ggplot() +
+  geom_polygon(aes(x = long,
+                   y = lat,
+                   group = id,
+                   fill = tran_p_ha),
+               data = transaction_map,
+               color = elv_dblue,
+               # fill = elv_blue,
+               alpha = 0.5) +
+  theme_map()+
+  coord_fixed()+
+  theme(text = element_text(size = 32), #, family = "elv_font"
+        plot.caption =  element_text(size= 16, color = elv_grey),
+        legend.position = "none")

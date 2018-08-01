@@ -5,13 +5,21 @@ library(tidyverse)
 asum_plot <- readRDS(file = "data/rds/clean_asum_data.Rds")
 
 p <- asum_plot %>% 
-  filter(year > 2003 & year < 2018) %>%
-  group_by(year,region) %>% 
-  summarise(count = sum(tran_count)) %>% 
+  filter(!(year == 2018 & qtr == "III")) %>% 
+  mutate(qtr = case_when(qtr == "IV" ~ "01.10",
+                         qtr == "III" ~ "01.07",
+                         qtr == "II" ~ "01.04",
+                         TRUE ~ "01.01")) %>% 
+  group_by(year, qtr,region) %>% 
+  summarise(count = sum(tran_count)) %>%
   ungroup() %>% 
-  ggplot(aes(x = year, y = count, color = region))+
-  geom_line(alpha = 0.6)+
-  scale_x_continuous(breaks = seq(2004,2017,1))
+  group_by(region) %>% 
+  mutate(cum_sum = cumsum(count),
+         qtr_year = as.POSIXct(strptime(paste0(year,".",qtr),format = "%Y.%d.%m"))) %>% 
+  ggplot(aes(x = qtr_year, y = cum_sum, color = region))+
+  geom_line(alpha = 0.4)
+
+p
 
 library(plotly)
 

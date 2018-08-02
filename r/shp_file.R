@@ -37,31 +37,31 @@ write.csv2(area_plot, file = "data/csv/area_plot.csv")
 
 
 ## generating base plot with geom_polygon
-
-base_map <- ggplot() +
-  geom_polygon(aes(x = long,
-                   y = lat,
-                   group = group,
-                   fill = id),
-               data = area_plot,
-               color = elv_dblue,
-               # fill = elv_blue,
-               alpha = 0.5) +
-  theme_map()+
-  coord_fixed()+
-  theme(text = element_text(size = 32), #, family = "elv_font"
-        plot.caption =  element_text(size= 16, color = elv_grey),
-        legend.position = "none")
-
-## need to check out ggplot new map plotting options
-
-## get data for linnaosa/asum and plot it
-
-## check other projects how to analyse property information
-
-## go wild
-
-base_map
+# 
+# base_map <- ggplot() +
+#   geom_polygon(aes(x = long,
+#                    y = lat,
+#                    group = group,
+#                    fill = id),
+#                data = area_plot,
+#                color = elv_dblue,
+#                # fill = elv_blue,
+#                alpha = 0.5) +
+#   theme_map()+
+#   coord_fixed()+
+#   theme(text = element_text(size = 32), #, family = "elv_font"
+#         plot.caption =  element_text(size= 16, color = elv_grey),
+#         legend.position = "none")
+# 
+# ## need to check out ggplot new map plotting options
+# 
+# ## get data for linnaosa/asum and plot it
+# 
+# ## check other projects how to analyse property information
+# 
+# ## go wild
+# 
+# base_map
 
 ### need to get actual reference to this file
 ## why there are so many NA-s. Every qtr doesn't have transactions

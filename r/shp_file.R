@@ -78,18 +78,17 @@ area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding =
 
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "01/07/2004"), by = c("id" = "region"))
+  left_join(subset(region_data, qtr_year == "01/07/2008"), by = c("id" = "region"))
 
 mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
 
 
-tln_plot <- ggplot() +
-  geom_polygon(aes(x = long,
-                   y = lat,
-                   group = id,
-                   fill = tran_p_ha),
-               data = transaction_map,
-               color = elv_blue) +
+tln_plot <- ggplot(aes(x = long,
+                       y = lat,
+                       group = id,
+                       fill = tran_p_ha),
+                   data = transaction_map) +
+  geom_polygon(color = elv_blue) +
   # geom_map(aes(x = long,
   #              y = lat,
   #              group = id,
@@ -98,9 +97,13 @@ tln_plot <- ggplot() +
   theme_map()+
   coord_fixed()+
   theme(legend.position = "top")+
-  scale_color_gradient2(midpoint=mid, low="green", mid="yellow",high="red")
+  scale_fill_gradient(low = "blue", high = "red")
 
 tln_plot
 
 ggplotly(tln_plot)
-?ggplotly
+
+
+# Make a gif --------------------------------------------------------------
+
+# I'll run this as gif to see, if the transactions have moved from Tornimäe to somewhere else

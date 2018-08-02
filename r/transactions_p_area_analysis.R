@@ -1,6 +1,6 @@
 
 
-
+library(plotly)
 
 # Combine asum and district data ------------------------------------------
 
@@ -35,8 +35,15 @@ region_ha_analysis <- full_data %>%
   group_by(qtr_year,region) %>% 
   summarise(total_count = sum(tran_count),
             region_area = mean(region_area)) %>% 
-  mutate(tran_p_ha = total_count/region_area)
+  mutate(tran_p_ha = total_count/region_area) %>% 
+  mutate(region = as.character(region))
+
+
+##write this data to csv to fix the umlauts
+write.csv2(region_ha_analysis, file = "data/csv/region_ha_analysis.csv", fileEncoding = "UTF-8", row.names = FALSE)
+
 
 
 ggplotly(ggplot(region_ha_analysis, aes(qtr_year, y = tran_p_ha, color = region))+
   geom_line(alpha = 0.4))
+

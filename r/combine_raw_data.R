@@ -46,8 +46,9 @@ asum_data_clean <- asum_data %>%
          em_max = as.numeric(em_max),
          em_median = as.numeric(em_median),
          em_mean = as.numeric(em_mean),
-         em_sd = as.numeric(em_sd))
-
+         em_sd = as.numeric(em_sd)) %>% 
+  mutate(region = case_when(region == "Ülemiste järv" ~ "Ülemistejärve",
+                            TRUE ~ as.character(region)))
 
 saveRDS(object = asum_data_clean, file ="data/rds/clean_asum_data.Rds")
 

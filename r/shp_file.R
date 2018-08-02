@@ -31,9 +31,10 @@ area_plot <- area.points %>%
          id = str_replace_all(id,"Ã¤","ä"),
          id = str_replace_all(id,"Ã¼","ü"),
          id = str_replace_all(id,"Ãœ","Ü"),
-         id = str_replace_all(id,"Ãµ","õ")) %>% 
-  mutate(id = as.factor(id))
+         id = str_replace_all(id,"Ãµ","õ"))
   
+write.csv2(area_plot, file = "data/csv/area_plot.csv")
+
 
 ## generating base plot with geom_polygon
 
@@ -63,22 +64,43 @@ base_map <- ggplot() +
 base_map
 
 ### need to get actual reference to this file
-## why there are so many NA-s. Figure this our
+## why there are so many NA-s. Every qtr doesn't have transactions
+
+
+guess_encoding("data/csv/region_ha_analysis_utf8.csv")
+guess_encoding("data/csv/area_plot_utf8.csv")
+
+region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "ISO-8859-1"))
+
+area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "ISO-8859-1"))
+
+
+
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_ha_analysis, qtr_year == "2003-07-01"), by = c("id" = "region"))
+  left_join(subset(region_data, qtr_year == "01/07/2004"), by = c("id" = "region"))
 
-ggplot() +
+mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
+
+
+tln_plot <- ggplot() +
   geom_polygon(aes(x = long,
                    y = lat,
                    group = id,
                    fill = tran_p_ha),
                data = transaction_map,
-               color = elv_dblue,
-               # fill = elv_blue,
-               alpha = 0.5) +
+               color = elv_blue) +
+  # geom_map(aes(x = long,
+  #              y = lat,
+  #              group = id,
+  #              fill = tran_p_ha),
+  #          data = transaction_map)+
   theme_map()+
   coord_fixed()+
-  theme(text = element_text(size = 32), #, family = "elv_font"
-        plot.caption =  element_text(size= 16, color = elv_grey),
-        legend.position = "none")
+  theme(legend.position = "top")+
+  scale_color_gradient2(midpoint=mid, low="green", mid="yellow",high="red")
+
+tln_plot
+
+ggplotly(tln_plot)
+?ggplotly

@@ -141,7 +141,7 @@ for (time_item in time_list){
     theme_map()+
     coord_fixed()+
     theme(legend.position = "top")+
-    scale_fill_gradient2(low = "blue",mid = "lightgreen", high = "red", midpoint = 1, limits = c(0,1.5))
+    scale_fill_gradient2(low = "blue",mid = "lightgreen", high = "red", midpoint = 0.75, limits = c(0,1.5))
   
   # tln_plot
   ggsave(filename = paste0("output/transaction_p_ha/trans_p_ha_",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)

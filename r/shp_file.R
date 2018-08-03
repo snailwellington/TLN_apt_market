@@ -72,7 +72,9 @@ write.csv2(area_plot, file = "data/csv/area_plot.csv")
 guess_encoding("data/csv/region_ha_analysis_utf8.csv")
 guess_encoding("data/csv/area_plot_utf8.csv")
 
-region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "UTF-8"))
+region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "UTF-8")) %>% 
+  mutate(region = case_when(region == "ÜlemisteJärve" ~ "Ülemistejärve",
+                            TRUE ~ region))
 
 area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "UTF-8"))
 
@@ -140,7 +142,7 @@ for (time_item in time_list){
     theme_map()+
     coord_fixed()+
     theme(legend.position = "top")+
-    scale_fill_gradient2(low = "blue",mid = "lightgreen", high = "red", midpoint = 0.75, limits = c(0,1.5))
+    scale_fill_gradient2(low = "blue",mid = "yellow", high = "red", midpoint = 0.75, limits = c(0,1.5))
   
   tln_plot
   ggsave(filename = paste0("output/transaction_p_ha/trans_p_ha_",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)

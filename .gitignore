@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 
-output/*
+output/transaction_p_ha/*
+output/total_count/*

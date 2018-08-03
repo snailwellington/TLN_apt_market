@@ -1,7 +1,7 @@
 
 library(tidyverse)
 library(ggthemes)
-
+library(plotly)
 options(encoding = "UTF-8")
 
 ## defined brand colors
@@ -70,15 +70,15 @@ write.csv2(area_plot, file = "data/csv/area_plot.csv")
 guess_encoding("data/csv/region_ha_analysis_utf8.csv")
 guess_encoding("data/csv/area_plot_utf8.csv")
 
-region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "ISO-8859-1"))
+region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "UTF-8"))
 
-area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "ISO-8859-1"))
+area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "UTF-8"))
 
 
 
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "01/07/2008"), by = c("id" = "region"))
+  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region"))
 
 mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
 
@@ -107,3 +107,6 @@ ggplotly(tln_plot)
 # Make a gif --------------------------------------------------------------
 
 # I'll run this as gif to see, if the transactions have moved from Tornimäe to somewhere else
+
+
+

@@ -2,6 +2,8 @@
 library(tidyverse)
 library(ggthemes)
 library(plotly)
+library(gifski)
+
 options(encoding = "UTF-8")
 
 ## defined brand colors
@@ -108,30 +110,50 @@ ggplotly(tln_plot)
 
 # I'll run this as gif to see, if the transactions have moved from Tornimäe to somewhere else
 
+time_list <- unique(region_data$qtr_year)
+min_tran <- min(region_data$tran_p_ha)
+max_tran <- max(region_data$tran_p_ha)
+
+region_data_limited <- region_data %>% 
+  mutate(tran_p_ha = case_when(tran_p_ha > 1.5 ~ 1.5,
+                               TRUE ~ tran_p_ha))
 
 
-transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region"))
+for (time_item in time_list){
+  transaction_map <- area_plot %>% 
+    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region"))
 
-mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
+# mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
 
 
-tln_plot <- ggplot(aes(x = long,
-                       y = lat,
-                       group = id,
-                       fill = tran_p_ha),
-                   data = transaction_map) +
-  geom_polygon(color = elv_blue) +
-  # geom_map(aes(x = long,
-  #              y = lat,
-  #              group = id,
-  #              fill = tran_p_ha),
-  #          data = transaction_map)+
-  theme_map()+
-  coord_fixed()+
-  theme(legend.position = "top")+
-  scale_fill_gradient(low = "blue", high = "red")
+  tln_plot <- ggplot(aes(x = long,
+                         y = lat,
+                         group = id,
+                         fill = tran_p_ha),
+                     data = transaction_map) +
+    geom_polygon(color = elv_blue) +
+    ggtitle(label = paste0(substr(time_item,4,7),"-",substr(time_item,2,3)))+
+    # geom_map(aes(x = long,
+    #              y = lat,
+    #              group = id,
+    #              fill = tran_p_ha),
+    #          data = transaction_map)+
+    theme_map()+
+    coord_fixed()+
+    theme(legend.position = "top")+
+    scale_fill_gradient2(low = "blue",mid = "lightgreen", high = "red", midpoint = 1, limits = c(0,1.5))
+  
+  # tln_plot
+  ggsave(filename = paste0("output/transaction_p_ha/trans_p_ha_",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)
 
-tln_plot
+}  
 
-ggplotly(tln_plot)
+
+
+gif_files <- list.files(path = "output/transaction_p_ha/", pattern = ".png")
+
+gifski(png_files = paste0("output/transaction_p_ha/",gif_files), gif_file = "output/transaction_p_ha.gif",
+       width = 1600,
+       height = 900, 
+       delay = 1,
+       loop = TRUE)

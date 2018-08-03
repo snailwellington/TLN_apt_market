@@ -110,3 +110,28 @@ ggplotly(tln_plot)
 
 
 
+transaction_map <- area_plot %>% 
+  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region"))
+
+mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
+
+
+tln_plot <- ggplot(aes(x = long,
+                       y = lat,
+                       group = id,
+                       fill = tran_p_ha),
+                   data = transaction_map) +
+  geom_polygon(color = elv_blue) +
+  # geom_map(aes(x = long,
+  #              y = lat,
+  #              group = id,
+  #              fill = tran_p_ha),
+  #          data = transaction_map)+
+  theme_map()+
+  coord_fixed()+
+  theme(legend.position = "top")+
+  scale_fill_gradient(low = "blue", high = "red")
+
+tln_plot
+
+ggplotly(tln_plot)

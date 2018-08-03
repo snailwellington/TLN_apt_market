@@ -10,7 +10,9 @@ Next things:
 - Calculate price indexes and changes for regions and districts
 - Try to find correlations as shown in the example project
 
+# Some results
 
+![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/total_count.gif)
 
 # Sources:
 - Price statistics - http://www.maaamet.ee/kinnisvara/htraru/FilterUI.aspx (27/07/2018)

@@ -13,7 +13,7 @@ Next things:
 
 # Some results
 
-![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/total_count.gif)
+![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/transaction_p_ha.gif)
 
 # Sources:
 - Price statistics - http://www.maaamet.ee/kinnisvara/htraru/FilterUI.aspx (27/07/2018)

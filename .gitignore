@@ -2,3 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+
+output/transaction_p_ha/*
+!output/transaction_p_ha/ .keep
+output/total_count/*
+!output/total_count/ .keep

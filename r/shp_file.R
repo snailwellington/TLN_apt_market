@@ -1,6 +1,8 @@
 
 library(tidyverse)
 library(ggthemes)
+library(plotly)
+library(gifski)
 
 options(encoding = "UTF-8")
 
@@ -70,17 +72,23 @@ write.csv2(area_plot, file = "data/csv/area_plot.csv")
 guess_encoding("data/csv/region_ha_analysis_utf8.csv")
 guess_encoding("data/csv/area_plot_utf8.csv")
 
-region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "ISO-8859-1"))
+region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale(encoding = "UTF-8")) %>% 
+  mutate(region = case_when(region == "ÜlemisteJärve" ~ "Ülemistejärve",
+                            TRUE ~ region))
 
-area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "ISO-8859-1"))
+area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "UTF-8"))
 
 
 
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "01/07/2008"), by = c("id" = "region")) %>% 
+  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region")) %>% 
   mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
                                TRUE ~ tran_p_ha))
+
+  
+
+
 
 tln_plot <- ggplot(aes(x = long,
                        y = lat,
@@ -106,3 +114,93 @@ ggplotly(tln_plot)
 # Make a gif --------------------------------------------------------------
 
 # I'll run this as gif to see, if the transactions have moved from Tornimäe to somewhere else
+
+time_list <- unique(region_data$qtr_year)
+
+
+region_data_limited <- region_data %>% 
+  mutate(tran_p_ha = case_when(tran_p_ha > 1.5 ~ 1.5,
+                               TRUE ~ tran_p_ha))
+
+
+for (time_item in time_list){
+  transaction_map <- area_plot %>% 
+    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region"))
+
+# mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
+
+
+  tln_plot <- ggplot(aes(x = long,
+                         y = lat,
+                         group = id,
+                         fill = tran_p_ha),
+                     data = transaction_map) +
+    geom_polygon(color = elv_blue) +
+    ggtitle(label = paste0(substr(time_item,4,7),"-",substr(time_item,2,3)))+
+    # geom_map(aes(x = long,
+    #              y = lat,
+    #              group = id,
+    #              fill = tran_p_ha),
+    #          data = transaction_map)+
+    theme_map()+
+    coord_fixed()+
+    theme(legend.position = "top")+
+    scale_fill_gradient2(low = "blue",mid = "yellow", high = "red", midpoint = 0.75, limits = c(0,1.5))
+  
+  tln_plot
+  ggsave(filename = paste0("output/transaction_p_ha/trans_p_ha_",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)
+
+}  
+
+
+
+gif_files <- list.files(path = "output/transaction_p_ha/", pattern = ".png")
+
+gifski(png_files = paste0("output/transaction_p_ha/",gif_files), gif_file = "output/transaction_p_ha.gif",
+       width = 1600,
+       height = 900, 
+       delay = 1,
+       loop = TRUE)
+
+
+# Transaction count -------------------------------------------------------
+
+
+for (time_item in time_list){
+  transaction_map <- area_plot %>% 
+    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region"))
+  
+  # mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
+  
+  
+  tln_plot <- ggplot(aes(x = long,
+                         y = lat,
+                         group = id,
+                         fill = total_count),
+                     data = transaction_map) +
+    geom_polygon(color = elv_blue) +
+    ggtitle(label = paste0(substr(time_item,4,7),"-",substr(time_item,2,3)))+
+    # geom_map(aes(x = long,
+    #              y = lat,
+    #              group = id,
+    #              fill = tran_p_ha),
+    #          data = transaction_map)+
+    theme_map()+
+    coord_fixed()+
+    theme(legend.position = "top")+
+    scale_fill_gradient2(low = "blue",mid = "lightgreen", high = "red", midpoint = 250, limits = c(0,500))
+  
+  # tln_plot
+  ggsave(filename = paste0("output/total_count/total_count",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)
+  
+}  
+
+
+
+gif_files <- list.files(path = "output/total_count/", pattern = ".png")
+
+gifski(png_files = paste0("output/total_count/",gif_files), gif_file = "output/total_count.gif",
+       width = 1600,
+       height = 900, 
+       delay = 1,
+       loop = TRUE)

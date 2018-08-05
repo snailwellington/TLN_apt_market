@@ -78,10 +78,9 @@ area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding =
 
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "01/07/2008"), by = c("id" = "region"))
-
-mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
-
+  left_join(subset(region_data, qtr_year == "01/07/2008"), by = c("id" = "region")) %>% 
+  mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
+                               TRUE ~ tran_p_ha))
 
 tln_plot <- ggplot(aes(x = long,
                        y = lat,

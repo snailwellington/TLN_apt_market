@@ -20,3 +20,4 @@ Next things:
 - Map info - https://geoportaal.maaamet.ee/est/Andmed-ja-kaardid/Haldus-ja-asustusjaotus-p119.html (27/07/2018)
 			https://www.tallinn.ee/est/ehitus/Tallinna-linnaosade-ja-asumite-piirid (27/07/2018)
 - Asum and District info - https://et.wikipedia.org/wiki/Tallinna_asumid (30/07/2018)
+- Fisher Ideal Price Index example - http://mba-lectures.com/statistics/descriptive-statistics/561/fisher-ideal-price-index.html

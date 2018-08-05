@@ -125,7 +125,9 @@ region_data_limited <- region_data %>%
 
 for (time_item in time_list){
   transaction_map <- area_plot %>% 
-    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region"))
+    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region"))%>% 
+    mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
+                                 TRUE ~ tran_p_ha))
 
 # mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
 

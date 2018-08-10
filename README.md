@@ -7,6 +7,7 @@ Next things:
 - Make an inital gif to see how transaction per region area has changed - done
 - Check all the plots if they are up to date with "sf" library
 - Write functions for shp plots, and use it!
+- Make year facet for changes
 - Re-organise the files to know which files are needed to be ran to get all the necessary data objects []
 - Get price information for regions. Currently regions are missing price data if there was less than 5 transactions. Plan is to use district price data for that.
 - Calculate price indexes and changes for regions and districts

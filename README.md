@@ -11,6 +11,7 @@ Next things:
 - Re-organise the files to know which files are needed to be ran to get all the necessary data objects []
 - Get price information for regions. Currently regions are missing price data if there was less than 5 transactions. Plan is to use district price data for that.
 - Calculate price indexes and changes for regions and districts
+- Hot spot analysis Getis-Ord Gi statistic https://www.youtube.com/watch?v=qQNOlfOYtyw
 - Try to find correlations as shown in the example project
 
 # Some results

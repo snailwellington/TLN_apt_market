@@ -12,7 +12,9 @@ Next things:
 - Get price information for regions. Currently regions are missing price data if there was less than 5 transactions. Plan is to use district price data for that.
 - Calculate price indexes and changes for regions and districts
 - Hot spot analysis Getis-Ord Gi statistic https://www.youtube.com/watch?v=qQNOlfOYtyw
+- Use cartography pacakge and make a "Polygon to Grid" plot of Tallinn
 - Try to find correlations as shown in the example project
+- Update data every now and then :)
 
 # Some results
 

@@ -2,8 +2,7 @@
 
 A look into how apartment market in different districts and regions ("asum" in estonian) of Tallinn recovered from 2008/09 recession. Additional look on how different areas of Tallinn are priced and how has the prices changed.
 
-
-Next things:
+Work in progress, next things:
 - Make an inital gif to see how transaction per region area has changed - done
 - Check all the plots if they are up to date with "sf" library
 - Write functions for shp plots, and use it!

@@ -3,16 +3,17 @@ library(tidyverse)
 library(ggthemes)
 library(plotly)
 library(gifski)
+library(viridis)
 
 options(encoding = "UTF-8")
 
 ## defined brand colors
-elv_blue <- "#00aae7"
-elv_black <- "#323232"
-elv_grey <- "#969696"
-elv_dblue <- "#002c77"
-elv_orange <- "#f55523"
-elv_yellow <- "#fdfd2f"
+cus_blue <- "#00aae7"
+cus_black <- "#323232"
+cus_grey <- "#969696"
+cus_dblue <- "#002c77"
+cus_orange <- "#f55523"
+cus_yellow <- "#fdfd2f"
 
 
 
@@ -46,13 +47,13 @@ write.csv2(area_plot, file = "data/csv/area_plot.csv")
 #                    group = group,
 #                    fill = id),
 #                data = area_plot,
-#                color = elv_dblue,
-#                # fill = elv_blue,
+#                color = cus_dblue,
+#                # fill = cus_blue,
 #                alpha = 0.5) +
 #   theme_map()+
 #   coord_fixed()+
-#   theme(text = element_text(size = 32), #, family = "elv_font"
-#         plot.caption =  element_text(size= 16, color = elv_grey),
+#   theme(text = element_text(size = 32), #, family = "cus_font"
+#         plot.caption =  element_text(size= 16, color = cus_grey),
 #         legend.position = "none")
 # 
 # ## need to check out ggplot new map plotting options
@@ -82,7 +83,7 @@ area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding =
 
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region")) %>% 
+  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region"))
   mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
                                TRUE ~ tran_p_ha))
 
@@ -95,7 +96,7 @@ tln_plot <- ggplot(aes(x = long,
                        group = id,
                        fill = tran_p_ha),
                    data = transaction_map) +
-  geom_polygon(color = elv_blue) +
+  geom_polygon(color = "black") +
   # geom_map(aes(x = long,
   #              y = lat,
   #              group = id,
@@ -104,7 +105,7 @@ tln_plot <- ggplot(aes(x = long,
   theme_map()+
   coord_fixed()+
   theme(legend.position = "top")+
-  scale_fill_gradient(low = "blue", high = "red")
+  scale_fill_continuous()
 
 tln_plot
 
@@ -125,9 +126,10 @@ region_data_limited <- region_data %>%
 
 for (time_item in time_list){
   transaction_map <- area_plot %>% 
-    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region"))%>% 
-    mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
-                                 TRUE ~ tran_p_ha))
+    left_join(subset(region_data_limited, qtr_year == time_item), by = c("id" = "region")) 
+  # %>% 
+  #   mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
+  #                                TRUE ~ tran_p_ha))
 
 # mid <- mean(transaction_map$tran_p_ha,na.rm = TRUE)
 
@@ -136,21 +138,24 @@ for (time_item in time_list){
                          y = lat,
                          group = id,
                          fill = tran_p_ha),
-                     data = transaction_map) +
-    geom_polygon(color = elv_blue) +
+                     data = transaction_map,
+                     alpha = 0.6) +
+    geom_polygon(color = "grey40") +
     ggtitle(label = paste0(substr(time_item,4,7),"-",substr(time_item,2,3)))+
     # geom_map(aes(x = long,
     #              y = lat,
     #              group = id,
     #              fill = tran_p_ha),
     #          data = transaction_map)+
+    labs(fill = "Transactions per area")+
     theme_map()+
     coord_fixed()+
     theme(legend.position = "top")+
-    scale_fill_gradient2(low = "blue",mid = "yellow", high = "red", midpoint = 0.75, limits = c(0,1.5))
+    # scale_fill_viridis()
+    scale_fill_continuous(limits = c(0,1.5))
   
   tln_plot
-  ggsave(filename = paste0("output/transaction_p_ha/trans_p_ha_",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)
+  ggsave(filename = paste0("output/transaction_p_ha/trans_p_ha_",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 200)
 
 }  
 
@@ -159,8 +164,6 @@ for (time_item in time_list){
 gif_files <- list.files(path = "output/transaction_p_ha/", pattern = ".png")
 
 gifski(png_files = paste0("output/transaction_p_ha/",gif_files), gif_file = "output/transaction_p_ha.gif",
-       width = 1600,
-       height = 900, 
        delay = 1,
        loop = TRUE)
 
@@ -180,7 +183,7 @@ for (time_item in time_list){
                          group = id,
                          fill = total_count),
                      data = transaction_map) +
-    geom_polygon(color = elv_blue) +
+    geom_polygon(color = cus_blue) +
     ggtitle(label = paste0(substr(time_item,4,7),"-",substr(time_item,2,3)))+
     # geom_map(aes(x = long,
     #              y = lat,
@@ -190,10 +193,10 @@ for (time_item in time_list){
     theme_map()+
     coord_fixed()+
     theme(legend.position = "top")+
-    scale_fill_gradient2(low = "blue",mid = "lightgreen", high = "red", midpoint = 250, limits = c(0,500))
+    scale_fill_continuous(limits = c(0,500))
   
   # tln_plot
-  ggsave(filename = paste0("output/total_count/total_count",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 100)
+  ggsave(filename = paste0("output/total_count/total_count",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 200)
   
 }  
 

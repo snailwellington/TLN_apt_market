@@ -2,8 +2,7 @@
 
 A look into how apartment market in different districts and regions ("asum" in estonian) of Tallinn recovered from 2008/09 recession. Additional look on how different areas of Tallinn are priced and how has the prices changed.
 
-
-Next things:
+Work in progress, next things:
 - Make an inital gif to see how transaction per region area has changed - done
 - Check all the plots if they are up to date with "sf" library
 - Write functions for shp plots, and use it!
@@ -12,7 +11,9 @@ Next things:
 - Get price information for regions. Currently regions are missing price data if there was less than 5 transactions. Plan is to use district price data for that.
 - Calculate price indexes and changes for regions and districts
 - Hot spot analysis Getis-Ord Gi statistic https://www.youtube.com/watch?v=qQNOlfOYtyw
+- Use cartography pacakge and make a "Polygon to Grid" plot of Tallinn
 - Try to find correlations as shown in the example project
+- Update data every now and then :)
 
 # Some results
 

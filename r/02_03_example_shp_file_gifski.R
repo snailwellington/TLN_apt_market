@@ -183,8 +183,9 @@ for (time_item in time_list){
                          group = id,
                          fill = total_count),
                      data = transaction_map) +
-    geom_polygon(color = cus_blue) +
+    geom_polygon(color = "grey40") +
     ggtitle(label = paste0(substr(time_item,4,7),"-",substr(time_item,2,3)))+
+    labs(fill = "Total no of transactions")+
     # geom_map(aes(x = long,
     #              y = lat,
     #              group = id,
@@ -195,7 +196,7 @@ for (time_item in time_list){
     theme(legend.position = "top")+
     scale_fill_continuous(limits = c(0,500))
   
-  # tln_plot
+  tln_plot
   ggsave(filename = paste0("output/total_count/total_count",substr(time_item,4,7),"-",substr(time_item,2,3),".png"), dpi = 200)
   
 }  
@@ -205,7 +206,5 @@ for (time_item in time_list){
 gif_files <- list.files(path = "output/total_count/", pattern = ".png")
 
 gifski(png_files = paste0("output/total_count/",gif_files), gif_file = "output/total_count.gif",
-       width = 1600,
-       height = 900, 
        delay = 1,
        loop = TRUE)

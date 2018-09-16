@@ -49,7 +49,7 @@ find_index <- 1
 ggplot(fill_missing, aes(x = qtr_year, y = mean_m2_mean))+
   geom_line(aes(color = region))+
   geom_smooth()+
-  geom_hline(yintercept = 1189.5950)+
+  geom_hline(yintercept = 1650, color = "grey60", alpha = 0.5, size = 1.5, linetype = 2)+
   theme(legend.position = "bottom")+
   scale_x_datetime(date_breaks = ("1 year"), date_labels = "%Y")
 

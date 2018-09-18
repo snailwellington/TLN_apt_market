@@ -8,7 +8,7 @@ Work in progress, next things:
 - Write functions for shp plots, and use it!
 - Make year facet for changes
 - Re-organise the files to know which files are needed to be ran to get all the necessary data objects []
-- Get price information for regions. Currently regions are missing price data if there was less than 5 transactions. Plan is to use district price data for that.
+- Get price information for regions. Currently regions are missing price data if there was less than 5 transactions. Use district price data or model a price curve and use that for that.
 - Calculate price indexes and changes for regions and districts
 - Hot spot analysis Getis-Ord Gi statistic https://www.youtube.com/watch?v=qQNOlfOYtyw
 - Use cartography pacakge and make a "Polygon to Grid" plot of Tallinn

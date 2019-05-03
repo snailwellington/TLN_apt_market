@@ -4,7 +4,7 @@ library(zoo) ## to use na.locf()
 
 
 # Importing data from maaamet ---------------------------------------------
-
+###Korteriomandite (eluruumide) tehingud
 ## Read in asum data -------------------------------------------------------
 
 raw_list <- list.files("data/asum_data_raw/", pattern = ".xlsx")

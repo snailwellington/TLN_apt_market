@@ -2,28 +2,147 @@
 library(tidyverse)
 
 
-asum_plot <- readRDS(file = "data/rds/clean_asum_data.Rds")
+library(tidyverse)
+library(ggthemes)
 
-p <- asum_plot %>% 
-  filter(!(year == 2018 & qtr == "III")) %>% 
+
+
+
+
+# Combine asum and district data ------------------------------------------
+
+obj_reg <- readRDS("data/rds/asum_district_match.Rds")
+asum_data <- readRDS(file = "data/rds/clean_asum_data.Rds")
+
+
+full_data <- asum_data %>% 
+  left_join(obj_reg, by = c("region")) %>% 
   mutate(qtr = case_when(qtr == "IV" ~ "01.10",
                          qtr == "III" ~ "01.07",
                          qtr == "II" ~ "01.04",
                          TRUE ~ "01.01")) %>% 
-  group_by(year, qtr,region) %>% 
-  summarise(count = sum(tran_count)) %>%
-  ungroup() %>% 
+  mutate(qtr_year = as.POSIXct(strptime(paste0(year,".",qtr),format = "%Y.%d.%m"))) %>% 
+  select(year,qtr,qtr_year,district:region_area,region:em_sd) %>% 
+  mutate(population = as.numeric(str_replace(population," ","")))
+
+
+
+### tallinn mean price of all regions
+tln_mean_price <- full_data %>% 
+  group_by(qtr_year) %>% 
+  summarise(mean_price = mean(em_mean, na.rm = TRUE))
+
+ggplot(tln_mean_price,aes(x = qtr_year, y = mean_price))+
+  geom_line()+
+  geom_smooth()
+
+### tallinn mean price by different districts
+
+district_mean_price <- full_data %>% 
+  group_by(district,qtr_year) %>% 
+  # filter(lubridate::year(qtr_year) >= 2015) %>% 
+  summarise(mean_price = mean(em_mean, na.rm = TRUE)) %>% 
+  group_by(district) %>% 
+  mutate(index_value = min(mean_price,na.rm = TRUE)) %>% 
+  mutate(lead_price = lag(mean_price)) %>% 
+  mutate(price_change = round((mean_price/lead_price-1)*100,1),
+         index_change = mean_price/index_value) %>% 
+  na.omit()
+
+ggplot(district_mean_price,aes(x = qtr_year, y = index_change))+
+  # geom_line(aes())+
+  geom_smooth(aes(color = district),se = FALSE)+
+  # facet_wrap(~district)+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
+  scale_y_continuous(limits = c(0,6))
+
+ggplot(district_mean_price,aes(x = qtr_year, y = price_change))+
+  # geom_line(aes())+
+  geom_smooth(aes(color = district),se = FALSE)+
+  # facet_wrap(~district)+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
+  scale_y_continuous(breaks = seq(-30,30,5))
+  
+ggplot(district_mean_price,aes(x = qtr_year, y = mean_price))+
+  # geom_line(aes())+
+  geom_smooth(aes(color = district),se = FALSE)+
+  # facet_wrap(~district)+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
+  
+ggplot(district_mean_price,aes(mean_price))+
+  geom_histogram(aes(fill = district),  alpha = 0.9, binwidth = 100)
+
+
+ 
+
+
+
+## check only kesklinna data
+kesklinn_data <- full_data %>% 
+  filter(district == "Kesklinn") %>% 
+  # filter(lubridate::year(qtr_year) >= 2017) %>% 
+  group_by(qtr_year,region) %>% 
+  summarise(mean_price = mean(em_mean,na.rm = TRUE)) %>% 
+  # arrange(region) %>% 
   group_by(region) %>% 
-  mutate(cum_sum = cumsum(count),
-         qtr_year = as.POSIXct(strptime(paste0(year,".",qtr),format = "%Y.%d.%m"))) %>% 
-  ggplot(aes(x = qtr_year, y = cum_sum, color = region))+
-  geom_line(alpha = 0.4)
+  mutate(index_value = min(mean_price,na.rm = TRUE)) %>% 
+  mutate(lead_price = lag(mean_price)) %>% 
+  mutate(price_change = round((mean_price/lead_price-1)*100,1),
+         index_change = mean_price/index_value) 
 
-p
+ggplot(kesklinn_data,aes(x = qtr_year, y = index_change))+
+  geom_line(aes(color = region))+
+  geom_smooth()+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
+  scale_y_continuous(limits = c(-1,6))
 
-library(plotly)
+ggplot(kesklinn_data,aes(x = qtr_year, y = price_change))+
+  # geom_line(aes(color = region))+
+  geom_smooth(se = FALSE)+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
+  scale_y_continuous(breaks = seq(-10,max(kesklinn_data$price_change,na.rm = TRUE)+10,2.5))
 
-ggplotly(p)
+ggplot(kesklinn_data,aes(x = qtr_year, y = mean_price))+
+  geom_line(aes(color = region))+
+  geom_smooth(se = FALSE)+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
+
+## check only põhja tallinn
+## check only kesklinna data
+ptallinn_data <- full_data %>% 
+  filter(district == "Põhja-Tallinn") %>% 
+  group_by(qtr_year,region) %>% 
+  summarise(mean_price = mean(em_mean,na.rm = TRUE))
+
+ggplot(ptallinn_data,aes(x = qtr_year, y = mean_price))+
+  geom_line(aes(color = region))+
+  geom_smooth()+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
+
+# ## all region price distribtuion
+# ggplot(full_data,aes(em_mean))+
+#   geom_histogram(aes(fill = area_type),  alpha = 0.9, binwidth = 100)+
+#   facet_wrap(~region)
+
+###
+ggplot(asum_data,aes(x = qtr_year, y = em_mean))+
+  geom_line(aes(color = region))+
+  geom_smooth()
+
+
+
+ggplot(asum_data,aes(x = qtr_year, y = em_mean))+
+  geom_line(alpha = 0.4)+
+  geom_smooth()
+
+
+
+
+## functions
+
+
+
+
 
 #####  IDEAS ####
 

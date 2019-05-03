@@ -78,18 +78,21 @@ region_data <- read_csv2("data/csv/region_ha_analysis_utf8.csv", locale = locale
                             TRUE ~ region))
 
 area_plot <- read_csv2("data/csv/area_plot_utf8.csv", locale = locale(encoding = "UTF-8"))
-
+# area_plot <- data.table::fread("data/csv/area_plot_utf8.csv", encoding = "UTF-8")
 
 
 
 transaction_map <- area_plot %>% 
-  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region"))
+  left_join(subset(region_data, qtr_year == "1072008"), by = c("id" = "region")) %>% 
   mutate(tran_p_ha = case_when(is.na(tran_p_ha) == TRUE ~ 0,
-                               TRUE ~ tran_p_ha))
+                               TRUE ~ tran_p_ha)) %>% 
+  mutate(id = tolower(id),
+         id = str_replace_all(id, "ä","a"),
+         id = str_replace_all(id, "ü","u"),
+         id = str_replace_all(id, "ö","o"),
+         id = str_replace_all(id, "õ","o"))
 
-  
-
-
+### NEED to FIX encdoing of umlauts  
 
 tln_plot <- ggplot(aes(x = long,
                        y = lat,
@@ -107,9 +110,17 @@ tln_plot <- ggplot(aes(x = long,
   theme(legend.position = "top")+
   scale_fill_continuous()
 
-tln_plot
+# tln_plot
 
-ggplotly(tln_plot)
+ggplotly(tln_plot, encoding = "UTF-8")
+
+
+
+# Test with cartography ---------------------------------------------------
+
+library(cartography)
+
+##need to figure out how to try it out
 
 
 # Make a gif --------------------------------------------------------------

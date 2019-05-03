@@ -20,7 +20,7 @@ Work in progress, next things:
 ![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/transaction_p_ha.gif)
 
 ## m2 price change
-![price_mean](https://github.com/snailwellington/price_stat/blob/master/output/tallinn_price_mean.jpg)
+![price_mean](https://github.com/snailwellington/price_stat/blob/master/output/tallinn_price_mean.png)
 
 # Sources:
 - Price statistics - http://www.maaamet.ee/kinnisvara/htraru/FilterUI.aspx (27/07/2018)

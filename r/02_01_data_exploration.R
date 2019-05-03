@@ -1,7 +1,3 @@
-
-library(tidyverse)
-
-
 library(tidyverse)
 library(ggthemes)
 
@@ -29,12 +25,22 @@ full_data <- asum_data %>%
 
 ### tallinn mean price of all regions
 tln_mean_price <- full_data %>% 
-  group_by(qtr_year) %>% 
-  summarise(mean_price = mean(em_mean, na.rm = TRUE))
+  group_by(qtr_year,district) %>% 
+  summarise(mean_price = mean(em_mean, na.rm = TRUE)) %>% 
+  na.omit()
 
 ggplot(tln_mean_price,aes(x = qtr_year, y = mean_price))+
-  geom_line()+
-  geom_smooth()
+  geom_point(aes(color = district), size = 2, alpha = 0.75)+
+  geom_smooth()+
+  labs(x = "Aasta",
+       y= "Keskmine m2 hind",
+       title = "Tallinna korterite m2 hinnamuut",
+       color = "Linnaosa")+
+  scale_y_continuous(breaks = seq(0,4000,200))+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
+
+ggsave("output/tallinn_price_mean.png",width = 16, height = 9)
+
 
 ### tallinn mean price by different districts
 

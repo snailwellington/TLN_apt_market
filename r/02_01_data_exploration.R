@@ -39,7 +39,7 @@ ggplot(tln_mean_price,aes(x = qtr_year, y = mean_price))+
   scale_y_continuous(breaks = seq(0,4000,200))+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
 
-ggsave("output/tallinn_price_mean.png",width = 16, height = 9)
+ggsave("output/tallinn_price_mean.jpg",width = 8, height = 4.5, dpi = 300)
 
 
 ### tallinn mean price by different districts

@@ -20,6 +20,7 @@ full_data <- asum_data %>%
   mutate(qtr_year = as.POSIXct(strptime(paste0(year,".",qtr),format = "%Y.%d.%m"))) %>% 
   select(year,qtr,qtr_year,district:region_area,region:em_sd) %>% 
   mutate(population = as.numeric(str_replace(population," ","")))
+  
 
 
 
@@ -39,35 +40,60 @@ ggplot(tln_mean_price,aes(x = qtr_year, y = mean_price))+
   scale_y_continuous(breaks = seq(0,4000,200))+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
 
-ggsave("output/tallinn_price_mean.jpg",width = 8, height = 4.5, dpi = 300)
+ggsave("output/tallinn_price_mean.png",width = 8, height = 4.5, dpi = 300)
 
 
 ### tallinn mean price by different districts
+
+### get index value for given time
+
+get_index_value <- function(index_year){
+  index_value <- full_data %>% 
+    filter(year == index_year) %>% 
+    group_by(year) %>% 
+    summarise(index_value = mean(em_mean,na.rm = TRUE))
+  
+  return(index_value$index_value)
+}
+
 
 district_mean_price <- full_data %>% 
   group_by(district,qtr_year) %>% 
   # filter(lubridate::year(qtr_year) >= 2015) %>% 
   summarise(mean_price = mean(em_mean, na.rm = TRUE)) %>% 
   group_by(district) %>% 
-  mutate(index_value = min(mean_price,na.rm = TRUE)) %>% 
+  mutate(index_value = get_index_value(index_year = 2003)) %>% 
   mutate(lead_price = lag(mean_price)) %>% 
   mutate(price_change = round((mean_price/lead_price-1)*100,1),
          index_change = mean_price/index_value) %>% 
-  na.omit()
+  na.omit() %>% 
+  mutate(cum_chg = cumsum(price_change))
 
 ggplot(district_mean_price,aes(x = qtr_year, y = index_change))+
   # geom_line(aes())+
   geom_smooth(aes(color = district),se = FALSE)+
+  
   # facet_wrap(~district)+
-  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
-  scale_y_continuous(limits = c(0,6))
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
+  # scale_y_continuous(limits = c(0,10))
 
 ggplot(district_mean_price,aes(x = qtr_year, y = price_change))+
   # geom_line(aes())+
-  geom_smooth(aes(color = district),se = FALSE)+
-  # facet_wrap(~district)+
+  geom_hline(yintercept = 0, alpha = 0.3)+
+  geom_line(aes(color = district),size = 2, alpha = 0.5)+
+  # geom_smooth(aes(color = district),se = FALSE)+
+  facet_wrap(~district)+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
-  scale_y_continuous(breaks = seq(-30,30,5))
+  scale_y_continuous(breaks = seq(-50,50,5))
+
+ggplot(district_mean_price,aes(x = qtr_year, y = cum_chg))+
+  # geom_line(aes())+
+  geom_hline(yintercept = 0, alpha = 0.3)+
+  geom_step(aes(color = district),size = 2, alpha = 0.5)+
+  # geom_smooth(aes(color = district),se = FALSE)+
+  facet_wrap(~district)+
+  scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
+
   
 ggplot(district_mean_price,aes(x = qtr_year, y = mean_price))+
   # geom_line(aes())+

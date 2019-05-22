@@ -20,6 +20,9 @@ Work in progress, next things:
 ## How many transactions per area of district
 ![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/transaction_p_ha.gif)
 
+## Price change
+![price_change_gif](https://github.com/snailwellington/price_stat/blob/master/output/price_map.gif)
+
 ## m2 price change
 ![price_mean](https://github.com/snailwellington/price_stat/blob/master/output/tallinn_price_mean.jpg)
 

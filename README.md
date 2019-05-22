@@ -21,6 +21,7 @@ Work in progress, next things:
 ![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/transaction_p_ha.gif)
 
 ## Price change
+Region is NA when there has been less than 5 transaction for which statistics is not shared
 ![price_change_gif](https://github.com/snailwellington/price_stat/blob/master/output/price_map.gif)
 
 ## m2 price change

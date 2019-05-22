@@ -1,6 +1,6 @@
 library(tidyverse)
 library(ggthemes)
-
+library(zoo)
 
 
 
@@ -22,22 +22,33 @@ full_data <- asum_data %>%
   mutate(population = as.numeric(str_replace(population," ","")))
   
 
+full_data_filled <- full_data %>% 
+  group_by(district,region,area_type) %>% 
+  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE)) %>% 
+  group_by(district,region) %>% 
+  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE)) %>% 
+  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE)) %>% 
+  group_by(district) %>% 
+  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE)) %>% 
+  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE))
 
+saveRDS(full_data_filled,file = "data/full_data.RDS")
 
 ### tallinn mean price of all regions
-tln_mean_price <- full_data %>% 
-  group_by(qtr_year,district) %>% 
+tln_mean_price <- full_data_filled %>% 
+  group_by(qtr_year,district,area_type) %>% 
   summarise(mean_price = mean(em_mean, na.rm = TRUE)) %>% 
   na.omit()
 
 ggplot(tln_mean_price,aes(x = qtr_year, y = mean_price))+
-  geom_point(aes(color = district), size = 2, alpha = 0.75)+
-  geom_smooth()+
+  geom_jitter(aes(color = district), size = 2, alpha = 0.75)+
+  geom_smooth(aes(linetype = area_type))+
+  facet_grid(.~area_type)+
   labs(x = "Aasta",
        y= "Keskmine m2 hind",
        title = "Tallinna korterite m2 hinnamuut",
        color = "Linnaosa")+
-  scale_y_continuous(breaks = seq(0,4000,200))+
+  scale_y_continuous(breaks = seq(0,8000,500))+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
 
 ggsave("output/tallinn_price_mean.png",width = 8, height = 4.5, dpi = 300)
@@ -48,7 +59,7 @@ ggsave("output/tallinn_price_mean.png",width = 8, height = 4.5, dpi = 300)
 ### get index value for given time
 
 get_index_value <- function(index_year){
-  index_value <- full_data %>% 
+  index_value <- full_data_filled %>% 
     filter(year == index_year) %>% 
     group_by(year) %>% 
     summarise(index_value = mean(em_mean,na.rm = TRUE))
@@ -57,7 +68,7 @@ get_index_value <- function(index_year){
 }
 
 
-district_mean_price <- full_data %>% 
+district_mean_price <- full_data_filled %>% 
   group_by(district,qtr_year) %>% 
   # filter(lubridate::year(qtr_year) >= 2015) %>% 
   summarise(mean_price = mean(em_mean, na.rm = TRUE)) %>% 
@@ -80,7 +91,7 @@ ggplot(district_mean_price,aes(x = qtr_year, y = index_change))+
 ggplot(district_mean_price,aes(x = qtr_year, y = price_change))+
   # geom_line(aes())+
   geom_hline(yintercept = 0, alpha = 0.3)+
-  geom_line(aes(color = district),size = 2, alpha = 0.5)+
+  geom_line(aes(color = district),size = 1, alpha = 0.5)+
   # geom_smooth(aes(color = district),se = FALSE)+
   facet_wrap(~district)+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")+
@@ -91,6 +102,7 @@ ggplot(district_mean_price,aes(x = qtr_year, y = cum_chg))+
   geom_hline(yintercept = 0, alpha = 0.3)+
   geom_step(aes(color = district),size = 2, alpha = 0.5)+
   # geom_smooth(aes(color = district),se = FALSE)+
+  scale_y_continuous(breaks = seq(-100,200,10))+
   facet_wrap(~district)+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
 
@@ -110,7 +122,7 @@ ggplot(district_mean_price,aes(mean_price))+
 
 
 ## check only kesklinna data
-kesklinn_data <- full_data %>% 
+kesklinn_data <- full_data_filled %>% 
   filter(district == "Kesklinn") %>% 
   # filter(lubridate::year(qtr_year) >= 2017) %>% 
   group_by(qtr_year,region) %>% 

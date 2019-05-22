@@ -14,7 +14,7 @@ Work in progress, next things:
 - Use cartography pacakge and make a "Polygon to Grid" plot of Tallinn
 - Try to find correlations as shown in the example project
 - Update data every now and then :)
-- Kui perioodil piirkonna tehingute hind puudub, võta eelmine hind. Kui varasemalt pole hinda võta järgmine hind
+
 
 # Some results
 ## How many transactions per area of district

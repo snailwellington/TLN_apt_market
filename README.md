@@ -1,4 +1,4 @@
-# Tallinn housing market from 2003 III to 2019 I
+# Tallinn apartment market from 2003 III to 2019 I
 
 A look into how apartment market in different districts and regions ("asum" in estonian) of Tallinn recovered from 2008/09 recession. Additional look on how different areas of Tallinn are priced and how has the prices changed.
 
@@ -21,6 +21,7 @@ Work in progress, next things:
 ![total_count_gif](https://github.com/snailwellington/price_stat/blob/master/output/transaction_p_ha.gif)
 
 ## Price change
+Region is NA when there has been less than 5 transaction for which statistics is not shared
 ![price_change_gif](https://github.com/snailwellington/price_stat/blob/master/output/price_map.gif)
 
 ## m2 price change

@@ -27,9 +27,9 @@ full_data <- readRDS("data/full_data.RDS") %>%
   mutate(qtr_year = as.character(qtr_year),
          qtr = str_replace_all(qtr,"[[.]]","-"))
 
-price_map <- area_plot %>% 
-  left_join(subset(full_data,qtr_year == "2013-01-01"), by = c("id" = "region")) 
-  # mutate(id = tolower(id),
+# price_map <- area_plot %>% 
+#   left_join(subset(full_data,qtr_year == "2013-01-01"), by = c("id" = "region")) 
+#   # mutate(id = tolower(id),
   #        id = str_replace_all(id, "ä","a"),
   #        id = str_replace_all(id, "ü","u"),
   #        id = str_replace_all(id, "ö","o"),
@@ -68,7 +68,7 @@ for (time_item in time_list){
     theme_map()+
     coord_fixed()+
     theme(legend.position = "top")+
-    scale_fill_viridis(limits = c(0, 4000),breaks = seq(0,4500,1000))
+    scale_fill_viridis(limits = c(0, 3500),breaks = seq(0,4500,1000))
  
   
   tln_plot

@@ -23,12 +23,14 @@ full_data <- asum_data %>%
   
 
 full_data_filled <- full_data %>% 
-  group_by(district,region,area_type) %>% 
+  group_by(year,district,region,area_type) %>% 
   mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE)) %>% 
-  group_by(district,region) %>% 
-  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE)) %>% 
-  mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE)) %>% 
-  group_by(district) %>% 
+  # group_by(district,region) %>% 
+  # mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE)) %>% 
+  # mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE)) %>% 
+  group_by(year, district, region) %>% 
+  mutate(em_mean = case_when(is.na(em_mean) == TRUE ~ mean(em_mean),
+                             TRUE ~ em_mean)) %>% 
   mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE)) %>% 
   mutate(em_mean = na.locf(object = em_mean,na.rm = FALSE, fromLast = TRUE))
 
@@ -43,11 +45,12 @@ tln_mean_price <- full_data_filled %>%
 ggplot(tln_mean_price,aes(x = qtr_year, y = mean_price))+
   geom_jitter(aes(color = district), size = 2, alpha = 0.75)+
   geom_smooth(aes(linetype = area_type))+
-  facet_grid(.~area_type)+
+  # facet_grid(.~area_type)+
   labs(x = "Aasta",
        y= "Keskmine m2 hind",
        title = "Tallinna korterite m2 hinnamuut",
-       color = "Linnaosa")+
+       color = "Linnaosa",
+       linetype = "Korteri suurus, m2")+
   scale_y_continuous(breaks = seq(0,8000,500))+
   scale_x_datetime(date_breaks = "1 year", date_labels = "%Y")
 

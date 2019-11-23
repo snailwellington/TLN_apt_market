@@ -172,16 +172,6 @@ ggplot(ptallinn_data,aes(x = qtr_year, y = mean_price))+
 #   facet_wrap(~region)
 
 ###
-ggplot(asum_data,aes(x = qtr_year, y = em_mean))+
-  geom_line(aes(color = region))+
-  geom_smooth()
-
-
-
-ggplot(asum_data,aes(x = qtr_year, y = em_mean))+
-  geom_line(alpha = 0.4)+
-  geom_smooth()
-
 
 
 
